@@ -30,7 +30,6 @@ if [ $stage -le 1 ]; then
   local/prepare_data.sh
 fi
 
-
 if [ $stage -le 2 ]; then
   local/prepare_dict.sh
 fi

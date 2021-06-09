@@ -21,13 +21,14 @@ my %transcripts = map {
 close(TRANSCRIPTS);
 
 open(TEXT, '>', $target_dir . "/text") or die $!;
-open(WAV_SCP, '>', $target_dir . "/text") or die $!;
+open(WAV_SCP, '>', $target_dir . "/wav.scp") or die $!;
 open(UTT2SPK, '>', $target_dir . "/utt2spk") or die $!;
 
 while (<AUDIO_FILES>) {
   chomp;
   $flac_path = $_;
 
+  # audio file path is a .flac file relative path to the data root
   if (!($flac_path =~ /^(.*?)\/([^\/]+)\.flac/)) {
     print "WARNING: No flac file name in path $_", "\n";
     exit -1;
@@ -35,6 +36,8 @@ while (<AUDIO_FILES>) {
 
   $flac_dir = $1;
   $file_name = $2;
+  
+  # transcripts are indexed using file relative path without extension
   $transcript_key = $flac_dir . "/" . $file_name;
 
   if (!exists $transcripts{$transcript_key}) {
