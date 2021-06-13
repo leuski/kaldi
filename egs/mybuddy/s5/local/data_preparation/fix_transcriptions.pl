@@ -1,9 +1,9 @@
 #! /usr/bin/perl -w
 
 my %map = ( 
-"(())" => "", # 3405
-"(*)" => "", # 1
-"(8)" => "", # 1
+"(())" => " ", # 3405
+"(*)" => " ", # 1
+"(8)" => " ", # 1
 "(80)" => "<NOISE>", # 1
 "(SOUND)" => "<NOISE>", # 1
 "(THROUGH THAT BACK)" => "<SPOKEN_NOISE>", # 1
@@ -38,10 +38,10 @@ my %map = (
 "+EH+" => "EH", # 1
 "+ER+" => "EH", # 8
 "+ERRR+" => "EH", # 1
-"+HA HA+" => "<LAUGHTER>", # 1
-"+HA+" => "<LAUGHTER>", # 7
-"+HAHA+" => "<LAUGHTER>", # 3
-"+HAHAHA+" => "<LAUGHTER>", # 1
+"+HA HA+" => "<SPOKEN_NOISE>", # 1
+"+HA+" => "HA", # 7
+"+HAHA+" => "<SPOKEN_NOISE>", # 3
+"+HAHAHA+" => "<SPOKEN_NOISE>", # 1
 # "+HELLO+" => "<SPOKEN_NOISE>", # 1
 "+HM+" => "HM", # 62
 "+HMM+" => "HM", # 14
@@ -112,10 +112,10 @@ my %map = (
 "+YES+" => "<SPOKEN_NOISE>", # 1
 "+YO+" => "<SPOKEN_NOISE>", # 1
 "< BREATH>" => "<NOISE>", # 1
-"< NO-SIGNAL>" => "", # 1
-"< NO_SIGNAL>" => "", # 1
+"< NO-SIGNAL>" => " ", # 1
+"< NO_SIGNAL>" => " ", # 1
 "< SIDE SPEECH>" => "<SPOKEN_NOISE>", # 2
-"< SILENCE>" => "", # 4
+"< SILENCE>" => " ", # 4
 "< SINGING>" => "<NOISE>", # 1
 "< UNCLEAR VOICE>" => "<SPOKEN_NOISE>", # 1
 # "<'SIDE_SPEECH>" => "<SPOKEN_NOISE>", # 1
@@ -130,30 +130,30 @@ my %map = (
 "<DISCARD>" => "<NOISE>", # 808
 "<DISTURBANCE>" => "<SPOKEN_NOISE>", # 1
 "<ECHO>" => "<SPOKEN_NOISE>", # 2
-"<FP>" => "", # 1493
+"<FP>" => " ", # 1493
 "<FSSSSSSHHH>" => "<SPOKEN_NOISE>", # 1
-"<HA>" => "<LAUGHTER>", # 10 
+"<HA>" => "HA", # 10 
 "<HUM>" => "HM", # 42
 "<INAUDIBLE>" => "<SPOKEN_NOISE>", # 1
 "<INDISCERNIBLE>" => "<SPOKEN_NOISE>", # 413
 "<INDISCERNIBLEY>" => "<SPOKEN_NOISE>", # 1
 "<INDISCREET>" => "<SPOKEN_NOISE>", # 1
-"<LAUGH>" => "<LAUGHTER>", # 1166
+"<LAUGH>" => "<NOISE>", # 1166
 "<LONG BREATH>" => "<NOISE>", # 1
 # "<LOW PITCH>" => "<NOISE>", # 1
 "<MUSIC>" => "<NOISE>", # 1
-"<NO SIGNA >" => "", # 1
-"<NO SIGNAL>" => "", # 65
-"<NO VOICE>" => "", # 25
-"<NO _ SIGNAL>" => "", # 1
-"<NO _SIGNAL>" => "", # 1
-"<NO-SIGNAL>" => "", # 1
+"<NO SIGNA >" => " ", # 1
+"<NO SIGNAL>" => " ", # 65
+"<NO VOICE>" => " ", # 25
+"<NO _ SIGNAL>" => " ", # 1
+"<NO _SIGNAL>" => " ", # 1
+"<NO-SIGNAL>" => " ", # 1
 "<NOISE>" => "<NOISE>", # 669
 "<NOSIE>" => "<NOISE>", # 1
-"<NO_ SIGNAL>" => "", # 50
-"<NO_SIGNAL>" => "", # 1115
-"<NO_SPEECH>" => "", # 1
-"<NO_VOICE>" => "", # 1
+"<NO_ SIGNAL>" => " ", # 50
+"<NO_SIGNAL>" => " ", # 1115
+"<NO_SPEECH>" => " ", # 1
+"<NO_VOICE>" => " ", # 1
 "<PHRRR>" => "<NOISE>", # 1
 "<SIDE SIGNAL>" => "<SPOKEN_NOISE>", # 1
 "<SIDE SPEAKER>" => "<SPOKEN_NOISE>", # 9
@@ -166,8 +166,8 @@ my %map = (
 "<SIDE_SPEECH>" => "<SPOKEN_NOISE>", # 514
 # "<SIDE_S[EECH>" => "<SPOKEN_NOISE>", # 1
 # "<SIED_SPEECH>" => "<SPOKEN_NOISE>", # 1
-#"<SILENCE >" => "", # 2
-"<SILENCE>" => "", # 1246
+#"<SILENCE >" => " ", # 2
+"<SILENCE>" => " ", # 1246
 "<SINGING>" => "<NOISE>", # 4
 "<SNIFF>" => "<NOISE>", # 232
 "<UMM>" => "<SPOKEN_NOISE>", # 1
@@ -178,7 +178,7 @@ my %map = (
 "<WHISPER>" => "<NOISE>", # 36
 "<YAWN>" => "<NOISE>", # 3
 "[INDISCERNIBLE]" => "<SPOKEN_NOISE>", 
-"[]" => "", 
+"[]" => " ", 
 # "/COYOTE/" => " SLASH COYOTE SLASH ", 
 #"[00:00:01]" => "", 
 #"+A47:A60" => "",
@@ -341,6 +341,7 @@ while (<>) {
   $text =~ s/’/'/g;
   $text =~ s/‘/'/g;
   $text =~ s/–/-/g;
+  $text =~ s/ - / /g;
   
   $text =~ s/\?/ /g;
   $text =~ s/;/ /g;
@@ -352,6 +353,10 @@ while (<>) {
 
   # fix the known tags (see the table at the start)
   $text =~ s/($regex)/$map{$1}/g;
+  $text =~ s/(^| )-\w+/$1<SPOKEN_NOISE>/g;
+#  $text =~ s/(^| )MARNIE(\s+|$)/$1MARTY$2/g;  
+  $text =~ s/(\S)(<)/$1 $2/g;  
+  $text =~ s/(>)(\S)/$1 $2/g;  
 
   # temporary 
 #   $text =~ s/<NOISE>//g;
@@ -363,17 +368,28 @@ while (<>) {
 #   $text =~ s/CO2/C O TWO/g;
 #   $text =~ s/H2O/H TWO O/g;
 #   $text =~ s/O2/O TWO/g;
+#   $text =~ s/D-CELL/D CELL/g;
+#   $text =~ s/UH-HUH/UH HUH/g;  
 
   # unfinished words, false starts. Make them regular and add to the dictionary
   $text =~ s/(\w+)-(\s+|$)/$1$2/g;
 
+  $text =~ s/-/ /g;
+
+  $text =~ s/\s\s+/ /g;
   $text =~ s/\s+$//g;
   $text =~ s/^\s+//g;
 
   print $filename . " " . $text, "\n";
 
-#   if ($text =~ m/[^A-Z'\- ]/g) {
+#   if ($text =~ m/\w+-\w+/g) {
+#     print $&, " ", $text, "\n";
+#   } else {
+#   if ($text =~ m/[^A-Z' ]/g) {
 #     print $&, " ", $text, "\n";
 #   }
+#   }
+
+
 
 }

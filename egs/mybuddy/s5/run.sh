@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Based mostly on the Tedlium recipe. 
+# Based mostly on the Tedlium recipe.
 #
 # Copyright  2021  Buddy AI, Inc
 #
@@ -17,7 +17,7 @@ decode_nj=38   # note: should not be >38 which is the number of speakers in the 
                # this will be too many jobs if you're using run.pl.
 stage=0
 train_rnnlm=false
-train_lm=false
+train_lm=true
 
 . utils/parse_options.sh # accept options
 
@@ -36,7 +36,7 @@ fi
 
 if [ $stage -le 3 ]; then
   utils/prepare_lang.sh data/local/dict_nosp \
-    "<unk>" data/local/lang_nosp data/lang_nosp
+    "<UNK>" data/local/lang_nosp data/lang_nosp
 fi
 
 if [ $stage -le 4 ]; then
@@ -44,9 +44,9 @@ if [ $stage -le 4 ]; then
   # download the pre-built LMs from openslr.org instead of building them
   # locally.
   if $train_lm; then
-    local/ted_train_lm.sh
+    local/train_lm.sh
   else
-    local/ted_download_lm.sh
+    local/download_lm.sh
   fi
 fi
 
